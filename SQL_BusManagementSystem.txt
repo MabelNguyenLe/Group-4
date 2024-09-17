@@ -1,0 +1,151 @@
+PRAGMA foreign_keys = ON;
+.mode columns
+.headers on
+
+.save bus.db
+
+.open bus.db
+
+
+-- 1. Driver Table
+CREATE TABLE Driver (
+    Driver_id INTEGER PRIMARY KEY, 
+    Driver_name TEXT NOT NULL, 
+    Driver_contact TEXT NOT NULL UNIQUE
+);
+
+-- 2. Bus Table
+CREATE TABLE Bus (
+    Bus_id INTEGER PRIMARY KEY, 
+    Bus_plate_no TEXT NOT NULL UNIQUE, 
+    Bus_model TEXT NOT NULL,
+    Route_id INTEGER,
+    FOREIGN KEY (Route_id) REFERENCES Route(Route_id)
+);
+
+-- 3. Route Table
+CREATE TABLE Route (
+    Route_id INTEGER PRIMARY KEY, 
+    Name TEXT NOT NULL
+);
+
+-- 4. Schedule Table
+CREATE TABLE Schedule (
+    Schedule_id INTEGER PRIMARY KEY, 
+    Weekday TEXT NOT NULL, 
+    Start_Time TEXT NOT NULL, 
+    End_Time TEXT NOT NULL, 
+    Route_id INTEGER,
+    FOREIGN KEY (Route_id) REFERENCES Route(Route_id)
+);
+
+-- 5. Actual Run Table
+CREATE TABLE Actual_Run (
+    Actual_Run_id INTEGER PRIMARY KEY, 
+    Date TEXT NOT NULL, 
+    Route_id INTEGER, 
+    Schedule_id INTEGER, 
+    Bus_id INTEGER, 
+    Driver_id INTEGER,
+    FOREIGN KEY (Route_id) REFERENCES Route(Route_id),
+    FOREIGN KEY (Schedule_id) REFERENCES Schedule(Schedule_id),
+    FOREIGN KEY (Bus_id) REFERENCES Bus(Bus_id),
+    FOREIGN KEY (Driver_id) REFERENCES Driver(Driver_id)
+);
+
+-- 6. Route-Bus Stop Table
+CREATE TABLE Route_Bus_Stop (
+    Route_bus_id INTEGER PRIMARY KEY, 
+    Position INTEGER NOT NULL, 
+    Route_id INTEGER, 
+    Bus_stop_id INTEGER,
+    FOREIGN KEY (Route_id) REFERENCES Route(Route_id),
+    FOREIGN KEY (Bus_stop_id) REFERENCES Bus_Stop(Bus_stop_id)
+);
+
+-- 7. Bus Stop Table
+CREATE TABLE Bus_Stop (
+    Bus_stop_id INTEGER PRIMARY KEY, 
+    Bus_stop_name TEXT NOT NULL, 
+    Longitude DECIMAL NOT NULL, 
+    Latitude DECIMAL NOT NULL
+);
+
+-- Insert data into Driver table
+INSERT INTO Driver (Driver_id, Driver_name, Driver_contact) VALUES (2020, 'Bill Dove', '+02902504768');
+INSERT INTO Driver (Driver_id, Driver_name, Driver_contact) VALUES (2021, 'Ann Smith', '+02902501003');
+INSERT INTO Driver (Driver_id, Driver_name, Driver_contact) VALUES (2022, 'Jack Johnson', '+02902507445');
+INSERT INTO Driver (Driver_id, Driver_name, Driver_contact) VALUES (2023, 'Emily Davis', '+02902506665');
+INSERT INTO Driver (Driver_id, Driver_name, Driver_contact) VALUES (2024, 'Mark Lee', '+02902503889');
+
+-- Insert data into Bus table
+INSERT INTO Bus (Bus_id, Bus_plate_no, Bus_model, Route_id) VALUES (1, 'AB0453', 'Volvo X90', 22);
+INSERT INTO Bus (Bus_id, Bus_plate_no, Bus_model, Route_id) VALUES (2, 'CD5271', 'Mercedes X300', 23);
+INSERT INTO Bus (Bus_id, Bus_plate_no, Bus_model, Route_id) VALUES (3, 'EF8012', 'Scania G500', 295);
+INSERT INTO Bus (Bus_id, Bus_plate_no, Bus_model, Route_id) VALUES (4, 'GH3210', 'MAN R800', 24);
+INSERT INTO Bus (Bus_id, Bus_plate_no, Bus_model, Route_id) VALUES (5, 'IJ7890', 'Iveco C200', 24);
+
+-- Insert data into Route table
+INSERT INTO Route (Route_id, Name) VALUES (22, 'City Centre');
+INSERT INTO Route (Route_id, Name) VALUES (23, 'Uptown Loop');
+INSERT INTO Route (Route_id, Name) VALUES (295, 'New Lynn Station');
+INSERT INTO Route (Route_id, Name) VALUES (24, 'City Link');
+INSERT INTO Route (Route_id, Name) VALUES (25, 'Inner Link');
+
+-- Insert data into Schedule table
+INSERT INTO Schedule (Schedule_id, Weekday, Start_Time, End_Time, Route_id) VALUES (1, 'Monday', '08:00', '17:00', 22);
+INSERT INTO Schedule (Schedule_id, Weekday, Start_Time, End_Time, Route_id) VALUES (2, 'Tuesday', '09:00', '18:00', 23);
+INSERT INTO Schedule (Schedule_id, Weekday, Start_Time, End_Time, Route_id) VALUES (3, 'Wednesday', '10:00', '19:00', 295);
+INSERT INTO Schedule (Schedule_id, Weekday, Start_Time, End_Time, Route_id) VALUES (4, 'Thursday', '11:00', '20:00', 24);
+INSERT INTO Schedule (Schedule_id, Weekday, Start_Time, End_Time, Route_id) VALUES (5, 'Friday', '12:00', '21:00', 25);
+
+-- Insert data into Actual_Run table
+INSERT INTO Actual_Run (Actual_Run_id, Date, Route_id, Schedule_id, Bus_id, Driver_id) VALUES (1, '2024-09-01', 22, 1, 1, 2022);
+INSERT INTO Actual_Run (Actual_Run_id, Date, Route_id, Schedule_id, Bus_id, Driver_id) VALUES (2, '2024-09-02', 23, 2, 2, 2020);
+INSERT INTO Actual_Run (Actual_Run_id, Date, Route_id, Schedule_id, Bus_id, Driver_id) VALUES (3, '2024-09-03', 295, 3, 3, 2023);
+INSERT INTO Actual_Run (Actual_Run_id, Date, Route_id, Schedule_id, Bus_id, Driver_id) VALUES (4, '2024-09-04', 24, 4, 4, 2024);
+INSERT INTO Actual_Run (Actual_Run_id, Date, Route_id, Schedule_id, Bus_id, Driver_id) VALUES (5, '2024-09-05', 25, 5, 5, 2021);
+
+-- Insert data into Route-Bus Stop table
+INSERT INTO Route_Bus_Stop (Route_bus_id, Position, Route_id, Bus_Stop_id) VALUES (1, 1, 22, 1);
+INSERT INTO Route_Bus_Stop (Route_bus_id, Position, Route_id, Bus_Stop_id) VALUES (2, 2, 23, 2);
+INSERT INTO Route_Bus_Stop (Route_bus_id, Position, Route_id, Bus_Stop_id) VALUES (3, 3, 295, 3);
+INSERT INTO Route_Bus_Stop (Route_bus_id, Position, Route_id, Bus_Stop_id) VALUES (4, 4, 24, 4);
+INSERT INTO Route_Bus_Stop (Route_bus_id, Position, Route_id, Bus_Stop_id) VALUES (5, 5, 25, 5);
+
+-- Insert data into Bus Stop table
+INSERT INTO Bus_Stop (Bus_stop_id, Bus_stop_name, Longitude, Latitude) VALUES (1, 'Avondale', 174.69179210, -36.89712055);
+INSERT INTO Bus_Stop (Bus_stop_id, Bus_stop_name, Longitude, Latitude) VALUES (2, 'Morning Side', 174.73354650, -36.87799699);
+INSERT INTO Bus_Stop (Bus_stop_id, Bus_stop_name, Longitude, Latitude) VALUES (3, 'Kingsland', 174.73947910, -36.87098407);
+INSERT INTO Bus_Stop (Bus_stop_id, Bus_stop_name, Longitude, Latitude) VALUES (4, 'Mt Eden', 174.76442850, -36.87816759);
+INSERT INTO Bus_Stop (Bus_stop_id, Bus_stop_name, Longitude, Latitude) VALUES (5, 'Grafton', 174.76340410, -36.86430344);
+
+1. select * from driver;
+
+2. select * from driver
+Inner join Actual_Run on (Driver.Driver_id = Actual_Run.Driver_id);
+
+3. select Actual_Run.Driver_id, Driver.Driver_name, Actual_Run.Schedule_id, Actual_Run.Route_id from Driver
+inner join Actual_Run on (Driver.Driver_id = Actual_Run.Driver_id)
+Where Driver_name like 'Bill Dove';
+
+4. select * from Driver
+inner join Actual_Run on (Actual_Run.Driver_id = Driver.Driver_id)
+inner join Bus on (Actual_Run.Bus_id = Bus.Bus_id);
+
+5. select Actual_Run.Driver_id, Driver.Driver_name, Actual_Run.Schedule_id, Actual_Run.Route_id, Actual_Run.Bus_id from Driver
+inner join Actual_Run on (Driver.Driver_id = Actual_Run.Driver_id);  
+
+6. select * from Driver
+where Driver.Driver_id like '2020';
+
+7. select * from Bus_Stop;
+update Bus_Stop set Bus_stop_name = 'Sign' where Bus_stop_id = 1;    
+
+8. Select Distinct Driver.Driver_id, Driver.Driver_name, Driver.Driver_contact from Driver
+inner join Actual_Run on (Driver.Driver_id = Actual_Run.Driver_id)
+inner join Route on (Route.Route_id = Actual_Run.Route_id)
+where Route.Name = 'Inner Link';
+ 
+
+
